@@ -1,59 +1,47 @@
-import os
 import re
 import csv
-
-CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
-
-
-def collect_data():
-    data_dir = os.path.join(CURRENT_DIR, 'source_data')
-    result = []
-    source_files = [i for i in os.listdir(data_dir) if i.split('.')[1] == 'txt']
-
-    for filename in source_files:
-        filepath = os.path.join(data_dir, filename)
-
-        with open(filepath) as fl:
-            for line in fl.readlines():
-                result += re.findall(r'^(\w[^:]+).*:\s+([^:\n]+)\s*$', line)
-
-    return result
+import chardet
 
 
 def get_data():
-    data = collect_data()
-    os_prod_list, os_name_list, os_code_list, os_type_list = [], [], [], []
-    main_data = [['Изготовитель системы', 'Название ОС', 'Код продукта', 'Тип системы']]
+    os_prod_list, os_name_list, os_code_list, os_type_list, main_data = [], [], [], [], []
 
-    for item in data:
-        os_prod_list.append(item[1]) if item[0] == main_data[0][0] else None
-        os_name_list.append(item[1]) if item[0] == main_data[0][1] else None
-        os_code_list.append(item[1]) if item[0] == main_data[0][2] else None
-        os_type_list.append(item[1]) if item[0] == main_data[0][3] else None
+    for i in range(1, 4):
+        with open(f'info_{i}.txt', 'rb') as file_obj:
+            data_bytes = file_obj.read()
+            result = chardet.detect(data_bytes)
+            data = data_bytes.decode(result['encoding'])
 
-    for i in range(len(os_prod_list)):
-        main_data.append([os_prod_list[i], os_name_list[i], os_code_list[i], os_type_list[i]])
+        os_prod_reg = re.compile(r'Изготовитель системы: \s*\S*')
+        os_prod_list.append(os_prod_reg.findall(data)[0].split()[2])
+
+        os_name_reg = re.compile(r'Windows\s*\S*')
+        os_name_list.append(os_name_reg.findall(data)[0])
+
+        os_code_reg = re.compile(r'Код продукта: \s*\S*')
+        os_code_list.append(os_code_reg.findall(data)[0].split()[2])
+
+        os_type_reg = re.compile(r'Тип системы: \s*\S*')
+        os_type_list.append(os_type_reg.findall(data)[0].split()[2])
+
+    headers = ['Изготовитель системы', 'Название ОС', 'Код продукта', 'Тип системы']
+    main_data.append(headers)
+
+    data_for_rows = [os_prod_list, os_name_list, os_code_list, os_type_list]
+
+    for idx in range(len(data_for_rows[0])):
+        line = [row[idx] for row in data_for_rows]
+        main_data.append(line)
 
     return main_data
 
 
-def write_to_csv(filepath):
-    data = get_data()
-
-    dir_, filename = os.path.split(filepath)
-
-    os.makedirs(dir_, exist_ok=True)
-
-    filepath = os.path.join(CURRENT_DIR, dir_, filename)
-
-    with open(filepath, 'w', encoding='utf-8', newline='') as csv_file:
-        writer = csv.writer(csv_file, delimiter=',', quoting=csv.QUOTE_NONNUMERIC)
-
-        for line in data:
-            writer.writerow(line)
-
-    print(f'Данные сохранены в {filepath}')
+def write_to_csv(out_file):
+    main_data = get_data()
+    with open(out_file, 'w', encoding='utf-8') as file:
+        writer = csv.writer(file)
+        for row in main_data:
+            writer.writerow(row)
 
 
-if __name__ == '__main__':
-    write_to_csv('source_data/new_data_report.csv')
+write_to_csv('data_report.csv')
