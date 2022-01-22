@@ -1,0 +1,18 @@
+2022-01-22 10:53:17,220 INFO client Client started 
+2022-01-22 10:53:17,221 WARNING client Server address is empty, using localhost 
+2022-01-22 10:53:17,221 WARNING client Server port is empty, using 7777 
+2022-01-22 10:53:17,221 DEBUG client Starting connection... 
+2022-01-22 10:53:17,223 ERROR client Exception: [Errno 61] Connection refused 
+2022-01-22 10:53:17,224 INFO client Client stopped 
+2022-01-22 10:53:36,147 WARNING client Server address is empty, using localhost 
+2022-01-22 10:53:36,147 WARNING client Server port is empty, using 7777 
+2022-01-22 10:53:36,148 DEBUG client Starting connection... 
+2022-01-22 10:53:36,150 DEBUG client Sending message... 
+2022-01-22 10:53:36,152 DEBUG client Waiting for response... 
+2022-01-22 10:53:36,154 INFO client Response: {'response': 200} 
+2022-01-22 10:53:36,160 WARNING client create_message Username Too Long Error 
+2022-01-22 10:53:36,161 WARNING client create_message Type Error 
+2022-01-22 10:53:36,162 ERROR client translate_message Mandatory Key Error 
+2022-01-22 10:53:36,163 ERROR client translate_message Type error 
+2022-01-22 10:53:36,164 ERROR client translate_message Response Code Length Error 
+2022-01-22 10:53:36,164 ERROR client translate_message Response code error 
